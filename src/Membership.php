@@ -37,8 +37,19 @@ class Membership {
 		$this->mail = $mail;
 	}
 
-	public function userCheck ($userId) {
-		$this->db->collection('users')->findOne();
+	public function userCheck ($userId, &$membership=false) {
+		$result = $this->db->collection('users')->findOne([
+			'_id' => $this->db->id($userId),
+			'membership' => [
+				'$exists' => true
+			]
+		]);
+		if (isset($result['_id'])) {
+			$membership = $result['membership'];
+			return true;
+		}
+		$membership = false;
+		return false;
 	}
 
 	public function userJoinOrExtend ($userId, $tierId, $term='+1 year', $lifetime=false) {
@@ -47,18 +58,21 @@ class Membership {
 		$expiration->modify($term);
 		$record['expiration'] = new \MongoDate($expiration->format('U'));
 		$record['term'] = $term;
-		$record['year'] = [date('Y')];
+		$record['years'] = [date('Y')];
 		$record['tierId'] = $tierId;
 		$record['status'] = 'active';
-		$record['_id'] = new \MongoId();
-		$recordExisting = $this->userCheck($userId);
-		if (isset($recordExisting['_id'])) {
-			$record['_id'] = $recordExisting['_id'];
+		if ($this->userCheck($userId, $recordExisting) === true) {
 			$expirationExisting = new \DateTime();
 			$expirationExisting->setTimestamp($recordExisting['expiration']->sec);
 			$expirationExisting->modify($term);
 			if ($expirationExisting->format('U') > $expiration->format('U')) {
 				$record['expiration'] = new \MongoDate($expirationExisting->format('U'));
+			}
+			if (is_array($recordExisting['years'])) {
+				$record['years'] = $recordExisting['years'];
+				$record['years'][] = date('Y');
+				sort($record['years']);
+				$record['years'] = array_unique($record['years']);
 			}
 		}
 		$this->db->collection('users')->update(
@@ -67,7 +81,7 @@ class Membership {
 				'$set' => [
 					'membership' => $record
 				],
-				'$addToSet' => ['groups' => 'Membership']
+				'$addToSet' => ['groups' => 'Members']
 			]
 		);
 	}
@@ -79,7 +93,7 @@ class Membership {
 				'$set' => [
 					'membership.status' => 'lapsed'
 				],
-				'$pull' => ['groups' => 'Membership']
+				'$pull' => ['groups' => 'Members']
 			]
 		);
 	}
@@ -92,11 +106,10 @@ class Membership {
 					'membership.status' => 'active',
 					'membership.expiration' => ['$lt' => new \MongoDate(strtotime('now'))] 
 				],
-				[
-					$this->userFields
-				]
+				$this->userFields
 			)->snapshot(), 
 			function ($user) {
+				$this->userMarkLapsed($user['_id']);
 				$this->notifyExpiration($user);
 			}
 		);
