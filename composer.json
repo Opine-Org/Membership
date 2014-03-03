@@ -1,6 +1,7 @@
 {
     "name": "opine/membership",
     "type": "library",
+    "minimum-stability": "dev",
     "description": "Service for managing aspects of user membership",
     "keywords": ["membership", "Opine", "MongoDB"],
     "license": "MIT",
@@ -13,7 +14,11 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "phpunit/phpunit": "3.7.32",
+        "opine/db": "dev-master",
+        "opine/mail": "dev-master",
+        "opine/container": "dev-master"
     },
     "autoload": {
         "psr-4": {"Opine\\": "src/"}

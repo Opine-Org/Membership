@@ -30,7 +30,7 @@ class Membership {
 	private $handlebars;
 	private $userFields = ['first_name', 'last_name', 'middle_name', 'suffix', 'prefix', 'email', 'membership'];
 	private $messageExpirationPending;
-	private $meesageExpiration;
+	private $messageExpiration;
 
 	public function __construct ($db, $mail) {
 		$this->db = $db;
@@ -52,7 +52,7 @@ class Membership {
 		$record['status'] = 'active';
 		$record['_id'] = new \MongoId();
 		$recordExisting = $this->userCheck($userId);
-		if (isset($recordExisting['_id']) {
+		if (isset($recordExisting['_id'])) {
 			$record['_id'] = $recordExisting['_id'];
 			$expirationExisting = new \DateTime();
 			$expirationExisting->setTimestamp($recordExisting['expiration']->sec);
@@ -86,22 +86,24 @@ class Membership {
 
 	public function usersCheckCompliance () {
 		$this->db->each(
-			$this->db->collection('users')->find([
-				'membership.lifetime' => false,
-				'membership.status' => 'active',
-				'membership.expiration' => ['$lt' => new \MongoDate(strtotime('now'))] 
-			],
-			[
-				$this->userFields
-			])->snapshot(), 
+			$this->db->collection('users')->find(
+				[
+					'membership.lifetime' => false,
+					'membership.status' => 'active',
+					'membership.expiration' => ['$lt' => new \MongoDate(strtotime('now'))] 
+				],
+				[
+					$this->userFields
+				]
+			)->snapshot(), 
 			function ($user) {
-				$this->notifyExpiration($user)
+				$this->notifyExpiration($user);
 			}
 		);
 	}
 
 	private function notificationsSet () {
-		$message = $this->db->collection('messages')->findOne('tags' => 'membership-expiration-pending');
+		$message = $this->db->collection('messages')->findOne(['tags' => 'membership-expiration-pending']);
 		if (isset($message['_id'])) {
 
 		}
