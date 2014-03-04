@@ -53,6 +53,7 @@ class Membership {
 	}
 
 	public function userJoinOrExtend ($userId, $tierId, $term='+1 year', $lifetime=false) {
+		$record = [];
 		$record['lifetime'] = $lifetime;
 		$expiration = new \DateTime();
 		$expiration->modify($term);
