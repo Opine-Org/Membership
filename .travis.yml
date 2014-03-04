@@ -6,3 +6,9 @@ php:
   
 install:
   - composer install
+
+services:
+  - mongodb
+  
+before_script:
+  - mongo phpunit --eval 'db.addUser("unit", "test");'
