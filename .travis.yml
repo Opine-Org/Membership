@@ -5,6 +5,7 @@ php:
   - hhvm
   
 install:
+  - composer self-update
   - composer install
 
 services:
@@ -12,3 +13,5 @@ services:
   
 before_script:
   - mongo phpunit --eval 'db.addUser("unit", "test");'
+
+script: vendor/bin/phpunit
