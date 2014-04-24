@@ -20,9 +20,9 @@
     "require": {
         "php": ">=5.4.0",
         "phpunit\/phpunit": "3.7.32",
-        "opine\/db": "1.0.1",
-        "opine\/mail": "1.0.1",
-        "opine\/container": "1.0.1"
+        "opine\/db": "dev-master",
+        "opine\/mail": "dev-master",
+        "opine\/container": "dev-master"
     },
     "autoload": {
         "psr-4": {
