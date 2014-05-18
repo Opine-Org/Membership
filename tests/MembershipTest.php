@@ -13,7 +13,7 @@ class MembershipTest extends \PHPUnit_Framework_TestCase {
 
     public function setup () {
         date_default_timezone_set('America/New_York');
-        $root = getcwd();
+        $root = __DIR__;
         $container = new Container($root, $root . '/container.yml');
         $this->membership = $container->membership;
         $this->db = $container->db;
