@@ -27,18 +27,16 @@ namespace Opine\Membership;
 class Route {
     private $route;
     private $root;
-    private $bundleRoot;
     private $person;
 
-    public function __construct ($container, $root, $bundleRoot) {
-        $this->route = $container->route;
+    public function __construct ($root, $db, $person, $route) {
+        $this->route = $route;
         $this->root = $root;
-        $this->bundleRoot = $bundleRoot;
-        $this->db = $container->db;
-        $this->person = $container->person;
+        $this->db = $db;
+        $this->person = $person;
     }
 
-    public function paths () {
+    public function paths ($bundleRoot='') {
         $this->route->get('/Membership/member-data', function () {
             $person = $this->person->current();
             if ($person === false) {
@@ -67,4 +65,8 @@ class Route {
     public function build ($bundleRoot) {}
 
     public function upgrade ($bundleRoot) {}
+
+    public function location () {
+        return __DIR__;
+    }
 }
