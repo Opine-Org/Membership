@@ -27,6 +27,11 @@
     "autoload": {
         "psr-4": {
             "Opine\\": "src\/"
+        },
+        "classmap": {
+            "src/Membership/controllers",
+            "src/Membership/models",
+            "src/Membership/views"
         }
     }
 }
