@@ -29,9 +29,7 @@
             "Opine\\": "src\/"
         },
         "classmap": [
-            "src/Membership/controllers",
-            "src/Membership/models",
-            "src/Membership/views"
+            "src/Membership/controllers"
         ]
     }
 }
