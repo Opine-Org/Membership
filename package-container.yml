@@ -1,0 +1,10 @@
+services:
+    membership:
+        class:     'Opine\Membership'
+        arguments: ['@db', '@mail']
+    membershipRoute:
+        class:     'Opine\Membership\Route'
+        arguments: ['@route']
+    membershipController:
+        class:     'Opine\Membership\Controller'
+        arguments: ['@db', '@person']
